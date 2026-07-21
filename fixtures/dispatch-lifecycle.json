@@ -1,0 +1,123 @@
+{
+  "document_id": "dispatch:architecture-demo",
+  "operations": [
+    {
+      "id": "op:1",
+      "document_id": "dispatch:architecture-demo",
+      "type": "REQUEST_DISPATCH",
+      "actor": "user:operator",
+      "at": "2026-01-01T12:00:00Z",
+      "input": {
+        "subject": "Prepare architecture briefing",
+        "agent_id": "agent:research",
+        "idempotency_key": "architecture-demo-1"
+      }
+    },
+    {
+      "id": "op:2",
+      "document_id": "dispatch:architecture-demo",
+      "type": "ACCEPT_DISPATCH",
+      "actor": "system:gateway",
+      "at": "2026-01-01T12:00:01Z",
+      "input": {}
+    },
+    {
+      "id": "op:3",
+      "document_id": "dispatch:architecture-demo",
+      "type": "CLAIM_LEASE",
+      "actor": "system:scheduler",
+      "at": "2026-01-01T12:00:02Z",
+      "input": {
+        "worker_id": "worker:1",
+        "fencing_token": "lease-token:1",
+        "expires_at": "2026-01-01T12:05:00Z"
+      }
+    },
+    {
+      "id": "op:4",
+      "document_id": "dispatch:architecture-demo",
+      "type": "START_ATTEMPT",
+      "actor": "worker:1",
+      "at": "2026-01-01T12:00:03Z",
+      "input": {}
+    },
+    {
+      "id": "op:5",
+      "document_id": "dispatch:architecture-demo",
+      "type": "REQUEST_CLARIFICATION",
+      "actor": "agent:research",
+      "at": "2026-01-01T12:01:00Z",
+      "input": {
+        "clarification_id": "clarification:1",
+        "question": "Should the briefing emphasize product or implementation?",
+        "recommendation": "Lead with product, then show the implementation contract."
+      }
+    },
+    {
+      "id": "op:6",
+      "document_id": "dispatch:architecture-demo",
+      "type": "RESUME_DISPATCH",
+      "actor": "user:operator",
+      "at": "2026-01-01T12:02:00Z",
+      "input": { "answer": "Lead with product." }
+    },
+    {
+      "id": "op:7",
+      "document_id": "dispatch:architecture-demo",
+      "type": "CLAIM_LEASE",
+      "actor": "system:scheduler",
+      "at": "2026-01-01T12:02:01Z",
+      "input": {
+        "worker_id": "worker:2",
+        "fencing_token": "lease-token:2",
+        "expires_at": "2026-01-01T12:07:00Z"
+      }
+    },
+    {
+      "id": "op:8",
+      "document_id": "dispatch:architecture-demo",
+      "type": "START_ATTEMPT",
+      "actor": "worker:2",
+      "at": "2026-01-01T12:02:02Z",
+      "input": {}
+    },
+    {
+      "id": "op:9",
+      "document_id": "dispatch:architecture-demo",
+      "type": "COMPLETE_EXECUTION",
+      "actor": "agent:research",
+      "at": "2026-01-01T12:03:00Z",
+      "input": {}
+    },
+    {
+      "id": "op:10",
+      "document_id": "dispatch:architecture-demo",
+      "type": "ATTACH_EVIDENCE",
+      "actor": "system:artifact-ingester",
+      "at": "2026-01-01T12:03:01Z",
+      "input": { "evidence_refs": ["artifact:briefing"] }
+    },
+    {
+      "id": "op:11",
+      "document_id": "dispatch:architecture-demo",
+      "type": "ACCEPT_OUTPUT",
+      "actor": "user:operator",
+      "at": "2026-01-01T12:04:00Z",
+      "input": {}
+    },
+    {
+      "id": "op:12",
+      "document_id": "dispatch:architecture-demo",
+      "type": "RECORD_INTEGRATION",
+      "actor": "system:integration-worker",
+      "at": "2026-01-01T12:05:00Z",
+      "input": {
+        "receipt": {
+          "kind": "published_document",
+          "revision": "briefing:v1",
+          "verified": true
+        }
+      }
+    }
+  ]
+}

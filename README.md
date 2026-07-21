@@ -13,7 +13,39 @@ Chat is useful for planning and directing work. It is much less effective for an
 
 Kapelle is an attempt to build the missing interface around those questions.
 
-This repository is a public architecture explainer. It contains no private fleet data, credentials, production configuration, or personal project content. It is not yet the application source repository.
+This repository is a public architecture and reference implementation. It contains no private fleet data, credentials, production configuration, or personal project content. It is not yet the production application source repository.
+
+## Explore the repository
+
+| Area | What is here |
+|---|---|
+| [`packages/protocol`](packages/protocol/src/index.js) | Versioned command, dispatch, attempt, clarification, artifact, and receipt contracts |
+| [`packages/document-models`](packages/document-models/src/index.js) | Executable Task and Dispatch Journal reducers |
+| [`apps/reference-control-plane`](apps/reference-control-plane/src/server.js) | Runnable durable-command reference API using only Node.js |
+| [`fixtures`](fixtures/dispatch-lifecycle.json) | A complete dispatch lifecycle that can be replayed through the reducer |
+| [`tests`](tests/reference.test.js) | Contract, reducer, idempotency, clarification, and restart tests |
+| [`docs`](docs/README.md) | Product and systems architecture documentation |
+
+### Run the reference implementation
+
+Requires Node.js 20 or newer. There are no third-party runtime dependencies.
+
+```bash
+npm test
+npm run demo
+npm run serve
+```
+
+Then submit a durable command:
+
+```bash
+curl -X POST http://127.0.0.1:4400/commands \
+  -H 'content-type: application/json' \
+  -H 'idempotency-key: architecture-demo-1' \
+  -d '{"kind":"dispatch_agent","subject":"Prepare architecture briefing","agent_id":"agent:research"}'
+```
+
+The server commits the command before returning its stable ID. Repeating the request with the same idempotency key returns the original command rather than creating duplicate work.
 
 ## The product thesis
 
