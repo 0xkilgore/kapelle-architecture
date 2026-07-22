@@ -17,6 +17,14 @@ This repository is a public architecture and reference implementation. It contai
 
 ## Explore the repository
 
+If you have ten minutes, follow this path:
+
+1. Run `npm test` to verify the lifecycle and restart contracts.
+2. Read [`fixtures/dispatch-lifecycle.json`](fixtures/dispatch-lifecycle.json) as the human-readable event history.
+3. Read [`packages/document-models/src/dispatch-journal.js`](packages/document-models/src/dispatch-journal.js) to see how those events reduce into durable state.
+4. Read [`apps/reference-control-plane/src/store.js`](apps/reference-control-plane/src/store.js) to see durable, idempotent command acceptance.
+5. Use [`docs/architecture.md`](docs/architecture.md) for the intended production boundary.
+
 | Area | What is here |
 |---|---|
 | [`packages/protocol`](packages/protocol/src/index.js) | Versioned command, dispatch, attempt, clarification, artifact, and receipt contracts |
