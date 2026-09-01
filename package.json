@@ -2,7 +2,7 @@
   "name": "kapelle-architecture",
   "version": "0.1.0",
   "private": true,
-  "description": "Public architecture and reference implementation for Kapelle",
+  "description": "Executable public architecture for Kapelle's operator console, durable agent workflows, and local AI boundary",
   "type": "module",
   "engines": {
     "node": ">=20"

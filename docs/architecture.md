@@ -27,6 +27,7 @@ flowchart LR
       Scheduler
       Agents
       Scripts["Deterministic tools"]
+      LocalModel["Local Qwen advisory inference"]
       Integrations
     end
 
@@ -52,8 +53,10 @@ flowchart LR
     Scheduler --> Lease
     Lease --> Agents
     Lease --> Scripts
+    Lease --> LocalModel
     Agents --> Journal
     Scripts --> Journal
+    LocalModel --> Journal
     Journal --> Events
     Events --> Documents
     Documents --> Product
@@ -119,6 +122,10 @@ The system can run on one machine while still containing independently restartab
 - an external watchdog.
 
 Local-first describes ownership and availability of data. It does not require one large process or one shared failure domain.
+
+## Explicit model routing
+
+Frontier-model agents and local inference have different policy boundaries. A workflow must choose deliberately between them. Requests marked `local-only` are admitted only to an explicit loopback provider and fail closed if that provider is unavailable; they never fall back to an external model. The public contract and tests are in [`packages/local-inference`](../packages/local-inference/src/index.js), with the full rationale in [Local AI](local-ai.md).
 
 ## Trust boundary
 

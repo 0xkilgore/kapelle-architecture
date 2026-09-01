@@ -1,40 +1,43 @@
 # Kapelle
 
-Kapelle is an operator interface and operating layer for people who work with many AI agents across real projects.
+**A local-first operating console for coordinating AI agents, reviewing their work, and turning output into durable tasks, reports, dispatches, and approvals.**
 
-Chat is useful for planning and directing work. It is much less effective for answering recurring operational questions:
+Kapelle grew out of a practical problem: once several agents are working across real projects, chat stops being an adequate control surface. The operator needs to know what is running, what landed, what requires a decision, and what actually changed.
 
-- What is running now?
-- What needs a human decision?
-- What completed while I was away?
-- Which outputs matter to me?
-- What changed, who changed it, and why?
-- Is the underlying system healthy?
+![Sanitized Kapelle operator-console demo](docs/images/operator-console-demo.png)
 
-Kapelle is an attempt to build the missing interface around those questions.
+> The image above is captured from the working Kapelle UI using deterministic synthetic fixtures. It contains no private fleet data. The private deployment, records, credentials, and machine configuration are deliberately not published.
 
-This repository is a public architecture and reference implementation. It contains no private fleet data, credentials, production configuration, or personal project content. It is not yet the production application source repository.
+This repository is the public, executable architecture of that system. It is not a placeholder landing page and it is not a dump of the private product repository. It contains the parts that can be evaluated safely: protocol contracts, operation-sourced document models, a restart-safe command store, synthetic lifecycle fixtures, a fail-closed local-inference boundary, tests, and the product architecture behind the working UI.
 
-## Explore the repository
+## What has been built
 
-If you have ten minutes, follow this path:
-
-1. Run `npm test` to verify the lifecycle and restart contracts.
-2. Read [`fixtures/dispatch-lifecycle.json`](fixtures/dispatch-lifecycle.json) as the human-readable event history.
-3. Read [`packages/document-models/src/dispatch-journal.js`](packages/document-models/src/dispatch-journal.js) to see how those events reduce into durable state.
-4. Read [`apps/reference-control-plane/src/store.js`](apps/reference-control-plane/src/store.js) to see durable, idempotent command acceptance.
-5. Use [`docs/architecture.md`](docs/architecture.md) for the intended production boundary.
-
-| Area | What is here |
+| Capability | Public evidence |
 |---|---|
-| [`packages/protocol`](packages/protocol/src/index.js) | Versioned command, dispatch, attempt, clarification, artifact, and receipt contracts |
-| [`packages/document-models`](packages/document-models/src/index.js) | Executable Task and Dispatch Journal reducers |
-| [`apps/reference-control-plane`](apps/reference-control-plane/src/server.js) | Runnable durable-command reference API using only Node.js |
-| [`fixtures`](fixtures/dispatch-lifecycle.json) | A complete dispatch lifecycle that can be replayed through the reducer |
-| [`tests`](tests/reference.test.js) | Contract, reducer, idempotency, clarification, and restart tests |
-| [`docs`](docs/README.md) | Product and systems architecture documentation |
+| **Operator UI** for agent output, tasks, reports, review, comments, and approvals | Sanitized capture above and the [operator-experience contract](docs/operator-experience.md) |
+| **ID Agents integration boundary** for named agents, teams, dispatch, and receipts | [Boundary document](docs/id-agents-boundary.md) and [versioned protocol](packages/protocol/src/index.js) |
+| **Durable operational ledger** based on Powerhouse-inspired document models | Executable [Task and Dispatch Journal reducers](packages/document-models/src/index.js), [fixture](fixtures/dispatch-lifecycle.json), and [tests](tests/reference.test.js) |
+| **Restart-safe control plane** with idempotent command acceptance | Runnable [reference API](apps/reference-control-plane/src/server.js) and durable [command store](apps/reference-control-plane/src/store.js) |
+| **Local AI beside frontier-model agents** | Fail-closed [local-inference package](packages/local-inference/src/index.js), [tests](tests/local-inference.test.js), and [design notes](docs/local-ai.md) |
 
-### Run the reference implementation
+The working private system is larger than this repository. Public claims here are intentionally limited to behavior demonstrated by code, synthetic fixtures, tests, or clearly labeled UI evidence.
+
+## Local AI: Qwen on Apple silicon
+
+Kapelle can route bounded advisory work to `mlx-community/Qwen3.6-27B-4bit`, running locally on an M4 Mac mini through an OpenAI-compatible loopback endpoint. This sits beside frontier-model agents rather than replacing them.
+
+The public boundary is deliberately narrow:
+
+- requests must declare `policy: "local-only"` and an admitted purpose;
+- the endpoint must be explicit numeric loopback HTTP with an exact `/v1` path;
+- proxy configuration, provider credentials, redirects, caller-selected models, and caller-supplied tools are rejected;
+- external-provider factories are not constructed for a local-only request;
+- if the local model is unavailable or returns the wrong model ID, the result is unavailable—there is no cloud fallback;
+- the adapter has no task, report, file, email, or finance mutation tools.
+
+This is the privacy property that matters: private-domain prompts cannot silently leave the machine because a local service failed. See [Local AI](docs/local-ai.md) for the contract and limitations.
+
+## Five-minute verification
 
 Requires Node.js 20 or newer. There are no third-party runtime dependencies.
 
@@ -53,127 +56,103 @@ curl -X POST http://127.0.0.1:4400/commands \
   -d '{"kind":"dispatch_agent","subject":"Prepare architecture briefing","agent_id":"agent:research"}'
 ```
 
-The server commits the command before returning its stable ID. Repeating the request with the same idempotency key returns the original command rather than creating duplicate work.
+The server commits the command before returning its stable ID. Repeating the request with the same idempotency key returns the original command instead of creating duplicate work.
 
-## The product thesis
+For a code-first tour:
 
-Most current agent products fit one of three shapes:
+1. Read the human-readable [dispatch lifecycle](fixtures/dispatch-lifecycle.json).
+2. Replay it through the [Dispatch Journal reducer](packages/document-models/src/dispatch-journal.js).
+3. Inspect [durable, idempotent command acceptance](apps/reference-control-plane/src/store.js).
+4. Inspect the [local-only inference gateway](packages/local-inference/src/index.js).
+5. Run the combined contract suite with `npm test`.
 
-1. Agents disappear inside familiar applications.
-2. One super-agent becomes the interface for everything.
-3. Agents remain developer infrastructure.
-
-Kapelle explores a fourth shape: people will use many specialized agents, closer to the way they use many applications today. If agents become a new software medium, people need an AI-native interface for operating them.
-
-The analogy is the personal computer, not the company dashboard. Kapelle begins as an individual productivity system for one high-agency operator working across professional, civic, financial, household, and creative domains.
-
-## What the operator sees
-
-The core interface is intentionally small:
-
-| Surface | Operator question |
-|---|---|
-| **My Desk** | Which reports and outputs should I read? |
-| **Agent Activity** | What is in flight, queued, and recently completed? |
-| **Needs Attention** | Which decisions, approvals, failures, or blockers require action? |
-| **Tasks** | What does the human or fleet need to do next? |
-| **System Health** | Is the control plane working, and what resources are being used? |
-
-Everything else should earn its place by improving one of those answers.
-
-## Architecture at a glance
+## Architecture
 
 ```mermaid
 flowchart TB
-    Human["Operator"] --> Shell["Kapelle operator shell"]
-    Shell --> Read["Read projections"]
-    Shell --> Commands["Durable commands"]
+    Human["Operator"] --> UI["Kapelle operator console"]
+    UI --> Views["Task, report, artifact, and attention projections"]
+    UI --> Commands["Durable commands"]
 
-    Commands --> Gateway["Manager gateway"]
-    Gateway --> Ledger["Command and event ledger"]
-    Ledger --> Workers["Restartable workers"]
-    Workers --> Runtimes["Agent runtimes and deterministic tools"]
-    Runtimes --> Evidence["Artifacts and execution receipts"]
-    Evidence --> Ledger
+    Commands --> Manager["ID Agents / manager boundary"]
+    Manager --> Ledger["Command and event ledger"]
+    Ledger --> Workers["Restartable agents and deterministic tools"]
+    Workers --> Receipts["Artifacts and execution receipts"]
+    Receipts --> Ledger
 
-    Ledger --> Models["Typed document models"]
-    Models --> Read
+    Ledger --> Documents["Typed document models"]
+    Documents --> Views
+
+    UI --> Router["Explicit model routing"]
+    Router --> Frontier["Frontier-model agents"]
+    Router --> Local["Local Qwen\nlocal-only, fail-closed"]
 ```
 
-The system is divided into three layers:
+The system has three layers:
 
-- **Agent substrate:** identities, runtimes, dispatch, attempts, clarification, and execution receipts.
-- **Document substrate:** typed state, append-only operations, reducers, references, and projections.
-- **Operator product:** prioritization, review, projects, tasks, loops, and human action.
+- **Agent substrate:** identity, dispatch, attempts, clarification, runtime selection, and receipts.
+- **Document substrate:** typed state, append-only operations, pure reducers, references, and projections.
+- **Operator product:** prioritization, review, tasks, reports, approvals, and human action.
 
-The boundaries matter. The substrate records durable facts. Kapelle decides how those facts should be ranked, explained, and acted upon.
+The substrate records facts. Kapelle decides how those facts should be ranked, explained, and acted upon.
 
 ## Why document models
 
 Agents are unreliable narrators. Typed documents with append-only operations are reliable evidence.
 
-Kapelle uses a document-model direction inspired by reactive document architecture and event sourcing. A durable object contains:
+Kapelle's document direction is influenced by Powerhouse and Reactive Document Architecture. A durable object contains a state schema, a closed set of legal operations, a pure reducer, an append-only history, projections for specific views, and explicit references to related documents. Markdown remains useful for reading and exchange, but it is not the lifecycle source of truth.
 
-- a typed state schema;
-- a closed set of legal operations;
-- a pure reducer from operations to current state;
-- an append-only operation history;
-- projections designed for specific operator views;
-- explicit references to related documents.
-
-This combines useful properties of files, databases, and user interfaces. Markdown remains valuable for reading and exchange, but it is not sufficient as the source of truth for lifecycle state.
-
-## Why the manager must be durable
-
-An agent system cannot depend on one process, one open HTTP request, or one in-memory waiter surviving.
-
-The target control plane follows five rules:
-
-1. Persist a durable command before execution.
-2. Return a stable identifier immediately.
-3. Run expensive or long-lived work in restartable workers.
-4. Make retries idempotent and attempts traceable.
-5. Treat completion, evidence, acceptance, and integration as separate facts.
-
-Synchronous chat can remain a convenience. It cannot be the system of record.
+This makes questions such as “who changed this?”, “was this retried?”, “which artifact caused this task?”, and “was the output merely generated or actually approved?” answerable from durable state rather than transcript interpretation.
 
 ## Relationship to ID Agents
 
-Kapelle began as an operator layer built around [ID Agents](https://github.com/idchain-world/id-agents), a model-agnostic system for managing named agents and teams. The intended product boundary is complementary:
+Kapelle began as an operator layer around [ID Agents](https://github.com/idchain-world/id-agents), a model-agnostic system for named agents and teams.
 
-- ID Agents can provide a small, dependable orchestration substrate.
-- Kapelle can provide the richer operator cockpit and document-centered workflows above it.
+- ID Agents provides bounded orchestration and communication infrastructure.
+- Kapelle provides the operator console and document-centered workflows above it.
 
-The most valuable upstream capabilities are stable APIs, durable asynchronous dispatch, explicit clarification and disposition states, verifiable runtime receipts, and portable team working directories. Kapelle should not require the upstream project to become a maximalist productivity application.
+Kapelle depends on stable contracts—identities, asynchronous dispatch, clarification, terminal dispositions, artifacts, and receipts—not private database tables or a fleet-dashboard-shaped product. [Read the boundary](docs/id-agents-boundary.md).
 
 ## Repository map
 
+```text
+apps/reference-control-plane/   runnable durable-command API
+packages/protocol/              versioned operations and lifecycle contracts
+packages/document-models/       executable Task and Dispatch Journal reducers
+packages/local-inference/       local-only, fail-closed model gateway
+fixtures/                       synthetic dispatch lifecycle
+tests/                          restart, reducer, protocol, and privacy-boundary tests
+docs/                           product and systems architecture
+```
+
+Start with:
+
 - [Product thesis](docs/product-thesis.md)
 - [System architecture](docs/architecture.md)
-- [Document models](docs/document-models.md)
-- [Durable control plane](docs/control-plane.md)
 - [Operator experience](docs/operator-experience.md)
+- [Document models](docs/document-models.md)
+- [Local AI](docs/local-ai.md)
+- [Durable control plane](docs/control-plane.md)
 - [ID Agents boundary](docs/id-agents-boundary.md)
 - [Roadmap](docs/roadmap.md)
-- [Example document contracts](examples/document-models/README.md)
 
-## Current status
+## Status and limitations
 
-Kapelle is an active prototype. The operator UI, local fleet, document packages, and orchestration backend exist, but the system is still consolidating around a single public architecture and one coherent product surface.
+Kapelle is an active private prototype with a working operator UI, local agent fleet, document packages, orchestration backend, and local-model integration. This public repository is a curated technical profile, not the complete application source.
 
-This repository distinguishes three kinds of claims:
+The distinction between claim types is deliberate:
 
-- **Current:** demonstrated in the working prototype.
-- **In progress:** under active implementation or migration.
-- **Proposed:** architectural direction that has not yet become product truth.
+- **Demonstrated here:** protocol, reducers, lifecycle replay, restart-safe idempotency, and local-inference policy enforcement.
+- **Demonstrated privately, represented safely here:** the operator UI and local Qwen deployment.
+- **In progress:** consolidation around one product surface and broader end-to-end durability.
+- **Not claimed:** a turnkey public deployment, production hardening, autonomous mutation of private records, or a general security guarantee for arbitrary local-model servers.
 
-That distinction is intentional. Agent software needs more receipts and fewer demos that imply finished infrastructure.
+Agent software needs more receipts and fewer demos that imply finished infrastructure.
 
 ## Principles
 
 - Local-first by default.
 - Human attention is the scarce resource.
-- Operator outputs and system artifacts are different things.
 - Every meaningful mutation should have an attributable operation history.
 - Model routing should be explicit and verifiable.
 - Deterministic software should perform deterministic work.
@@ -182,4 +161,4 @@ That distinction is intentional. Agent software needs more receipts and fewer de
 
 ## License
 
-No license has been selected yet. The repository is public for architectural discussion and evaluation. All rights are reserved until a license is added.
+No license has been selected. The repository is public for evaluation and architectural discussion; all rights are reserved until a license is added.

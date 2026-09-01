@@ -8,9 +8,10 @@ This directory explains the product and system from the outside in.
 2. [Operator experience](operator-experience.md)
 3. [System architecture](architecture.md)
 4. [Document models](document-models.md)
-5. [Durable control plane](control-plane.md)
-6. [Boundary with ID Agents](id-agents-boundary.md)
-7. [Public roadmap](roadmap.md)
+5. [Local AI](local-ai.md)
+6. [Durable control plane](control-plane.md)
+7. [Boundary with ID Agents](id-agents-boundary.md)
+8. [Public roadmap](roadmap.md)
 
 ## What is executable
 
@@ -18,6 +19,7 @@ The adjacent reference implementation turns the architecture into testable behav
 
 - [`../packages/protocol`](../packages/protocol/src/index.js) defines the public lifecycle vocabulary.
 - [`../packages/document-models`](../packages/document-models/src/index.js) implements pure reducers.
+- [`../packages/local-inference`](../packages/local-inference/src/index.js) enforces a fail-closed local-model boundary.
 - [`../apps/reference-control-plane`](../apps/reference-control-plane/src/server.js) demonstrates durable acceptance and idempotency.
 - [`../fixtures`](../fixtures/dispatch-lifecycle.json) provides a replayable lifecycle.
 - [`../tests`](../tests/reference.test.js) states the architectural claims as acceptance tests.
