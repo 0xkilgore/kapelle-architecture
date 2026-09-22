@@ -86,6 +86,10 @@ Markdown remains an excellent representation for reading, writing, Git diffs, an
 
 The source of truth for operational lifecycle should remain the typed document and its operations.
 
+## Current native implementation
+
+As of September 22, the private framework contains native Agent Definition, Agent Instance, Dispatch and Review Intent models. Task Authority and Report Registry are separate services. The Task/Dispatch Journal code in this public repository is a smaller reference implementation; its example operation names are not the native API contract. See [agent governance](agent-governance.md) for current boundaries and remaining service-record/context limitations.
+
 ## Powerhouse direction
 
 Kapelle's document architecture is influenced by Powerhouse and Reactive Document Architecture:

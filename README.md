@@ -1,6 +1,10 @@
 # Kapelle
 
-**A local-first operating console for coordinating AI agents, reviewing their work, and turning output into durable tasks, reports, dispatches, and approvals.**
+**Your agents need a home base.**
+
+A local-first operating console for coordinating AI agents, reviewing their work, and turning output into durable tasks, reports, dispatches, and approvals.
+
+**Conference visitors:** start with the [September 2026 briefing](docs/conference-brief.md), [current implementation status](docs/status-2026-09-22.md), and [agent governance/data structure](docs/agent-governance.md). Website: [Kapelle.ai](https://kapelle.ai).
 
 Kapelle grew out of a practical problem: once several agents are working across real projects, chat stops being an adequate control surface. The operator needs to know what is running, what landed, what requires a decision, and what actually changed.
 
@@ -21,6 +25,12 @@ This repository is the public, executable architecture of that system. It is not
 | **Local AI beside frontier-model agents** | Fail-closed [local-inference package](packages/local-inference/src/index.js), [tests](tests/local-inference.test.js), and [design notes](docs/local-ai.md) |
 
 The working private system is larger than this repository. Public claims here are intentionally limited to behavior demonstrated by code, synthetic fixtures, tests, or clearly labeled UI evidence.
+
+## September 2026 development update
+
+The private framework now uses native Powerhouse/Vetra document models for Agent Definition, Agent Instance, Dispatch and Review Intent, alongside separate Task Authority and Report Registry services. A repaired original-work-context view passed an isolated production build and five synthetic desktop/mobile journeys, including restart recovery. It distinguishes offered context, resolved inputs, task state, agent results, approval and external effect.
+
+This public repository still contains **smaller reference implementations**, not the complete native packages or private application. Real-source bindings, access adapters and host adoption remain installation work; successful development tests are not a live release. [Read the evidence and limits](docs/status-2026-09-22.md).
 
 ## Local AI: Qwen on Apple silicon
 
@@ -144,7 +154,8 @@ The distinction between claim types is deliberate:
 
 - **Demonstrated here:** protocol, reducers, lifecycle replay, restart-safe idempotency, and local-inference policy enforcement.
 - **Demonstrated privately, represented safely here:** the operator UI and local Qwen deployment.
-- **In progress:** consolidation around one product surface and broader end-to-end durability.
+- **Development-qualified privately:** pinned original-work context and separate approval state with synthetic desktop/mobile and restart checks.
+- **In progress:** real source/producer bindings, context-store adoption, runtime installation and external-effect settlement.
 - **Not claimed:** a turnkey public deployment, production hardening, autonomous mutation of private records, or a general security guarantee for arbitrary local-model servers.
 
 Agent software needs more receipts and fewer demos that imply finished infrastructure.
