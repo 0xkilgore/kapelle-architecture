@@ -1,0 +1,52 @@
+{
+  "kind": "illustrative-only",
+  "project": "project:demo",
+  "reference": {
+    "id": "reference:article",
+    "url": "https://example.com/agent-design",
+    "retrieval": "not-fetched"
+  },
+  "report": {
+    "id": "artifact:briefing",
+    "kind": "Report",
+    "content_version": "briefing:v1",
+    "publisher": "agent:research",
+    "dispatch_ref": "dispatch:architecture-demo",
+    "source_refs": [
+      "reference:article"
+    ],
+    "body": "Synthetic briefing: compare explicit delegation and durable results."
+  },
+  "collection": {
+    "id": "collection:agent-product-ideas",
+    "project_ref": "project:demo",
+    "member_refs": [
+      "reference:article",
+      "artifact:briefing"
+    ]
+  },
+  "task": {
+    "id": "task:briefing-follow-up",
+    "operations": [
+      {
+        "type": "CREATE_TASK",
+        "input": {
+          "title": "Review the architecture briefing",
+          "owner": "user:operator"
+        }
+      },
+      {
+        "type": "LINK_TASK_SOURCE",
+        "input": {
+          "source_ref": "reference:article"
+        }
+      },
+      {
+        "type": "LINK_TASK_SOURCE",
+        "input": {
+          "source_ref": "artifact:briefing"
+        }
+      }
+    ]
+  }
+}

@@ -1,58 +1,38 @@
-# Boundary with ID Agents
+# Orchestration and the IDAgents boundary
 
-## Complementary roles
+Updated October 5, 2026.
 
-ID Agents is a promising open substrate for named agents, teams, runtimes, and manager-directed work. Kapelle is the operator product above that substrate.
+Kapelle began around [IDAgents](https://github.com/idchain-world/id-agents). Its private deployment uses a substantially extended fork and associated Manager/Framework components. Do not assume current upstream IDAgents implements every Kapelle workflow or that this repository is a distribution of that fork.
 
-The boundary should remain explicit so each project can stay coherent.
+Upstream IDAgents uses [MIT](https://github.com/idchain-world/id-agents/blob/main/LICENSE). Kapelle's public reference code also uses MIT; copied upstream code must retain its applicable notices.
 
-## Capabilities that belong upstream
+## Responsibility map
 
-- stable agent and team identities;
-- versioned public API and event contract;
-- durable asynchronous dispatch;
-- attempt, lease, retry, and cancellation lifecycle;
-- clarification and terminal dispositions;
-- runtime and model adapters;
-- truthful runtime and usage receipts;
-- portable working-directory configuration;
-- deterministic script triggers;
-- bounded health and lifecycle diagnostics.
+| Layer | Responsibility |
+|---|---|
+| Upstream IDAgents | Starting orchestration substrate for named agents, teams and runtime integration; consult upstream for its current supported API |
+| Kapelle private extensions | Native agent/dispatch/review records, bounded execution and result-publication integration, recovery and source-context bindings; installation maturity varies |
+| Kapelle operator product | Inbox recommendations, Tasks, Reports, References, Collections, projects, review and the return of results to Today |
+| This public repository | Small standalone reducers, command store, local inference boundary and synthetic examples; no complete fork or runnable private fleet |
 
-## Capabilities that belong in Kapelle
+## Can another harness replace it?
 
-- My Desk and artifact ranking;
-- projects, tracks, and operator tasks;
-- cross-document views and search;
-- artifact reading, review, and feedback;
-- domain-specific document models;
-- recurring workflows and personal automation;
-- product-specific integration and release policy;
-- the visual operator shell.
+That is the intended boundary. Model choice, agent identity, execution runtime and orchestration are different concerns. A Claude or Codex conversation is not required to own Kapelle's persistent state. A custom harness could implement the execution boundary, but replacement is engineering work, not a configuration toggle proven here.
 
-## Public contract requirement
+A proposed adapter should preserve:
 
-Kapelle should depend on documented interfaces, not private database tables or desktop implementation details.
+1. Stable agent identity and discoverable capabilities, including what tools are actually available.
+2. Accepted instructions and explicit source/context references, plus receipts for inputs actually resolved.
+3. Durable request identity, conflict handling, attempt status and recovery after lost acknowledgments.
+4. Honest outcomes: queued, running, needs input, completed, failed, cancelled or uncertain, with supported transitions.
+5. Result identity, content version, producing run, publisher and links back to the original work.
+6. Authorization boundaries: access to a source is not permission to publish or modify it.
+7. Provider-contact and effect evidence sufficient to recover without blindly repeating external actions.
 
-The ideal upstream contract includes:
+These are proposed interoperability requirements. The [public protocol](contracts.md) illustrates a subset; no universal adapter certification is claimed.
 
-- semantic versioning;
-- compatibility and deprecation policy;
-- stable identifiers;
-- resumable events;
-- capability discovery;
-- an API-only conformance client;
-- one release of backward compatibility testing.
+## First conformance journey
 
-## Near-term interoperability experiment
+Use synthetic data to submit one approved request, recover its identity across a restart, return one versioned result and link it to the original Task. Then test conflicting request reuse, unavailable context, capability mismatch and uncertain execution. Only after that should a deployment admit real sources and providers.
 
-A useful first experiment would demonstrate one complete lifecycle:
-
-1. Kapelle submits a durable dispatch through the public API.
-2. ID Agents runs a named agent or deterministic script.
-3. The result emits a typed artifact event.
-4. Kapelle displays the artifact on My Desk.
-5. The operator comments or creates a task.
-6. The action resumes or dispatches follow-up work through the same public contract.
-
-Success is not a shared screen. Success is a restart-safe lifecycle with stable identity and evidence across both systems.
+An HTTP connection alone is not conformance. A harness must preserve the meaning of work and its evidence across the boundary.

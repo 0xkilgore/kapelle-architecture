@@ -1,6 +1,6 @@
 # Kapelle: a home base for your agents
 
-**Conference briefing · September 22, 2026**
+**Conference briefing · October 5, 2026**
 
 Website: [Kapelle.ai](https://kapelle.ai) · [Public reference code](../README.md#five-minute-verification)
 
@@ -38,15 +38,11 @@ These are distinct records and states. Reading a report does not approve a deplo
 
 The public repository includes runnable Task/Dispatch reducers, lifecycle fixtures, durable command acceptance and restart tests, and a local-only inference boundary. Run `npm test` and `npm run demo` from the repository root.
 
-The private prototype has an operator console with Today, Inboxes, Tasks, Reports, People, and Agents. Recent development qualification joins a Task, original agent run, accepted instructions, offered/resolved context, and an immutable Report identity into a read-only view. Five desktop/mobile browser journeys passed against synthetic records, including process restart and unavailable/changed/denied sources. See the [dated evidence summary](status-2026-09-22.md).
-
-![Synthetic original-work context and approval interface](images/original-work-context-2026-09-22.png)
-
-*Actual prototype UI with entirely synthetic records. This is a development qualification capture, not evidence of a deployed real workflow or a completed website publication.*
+The private prototype has Today, Inboxes, Tasks, Reports, People and Agents, with bounded review-agent workflows. Native References and Collections are implemented as a development candidate awaiting activation. General Task-origin delegation is next. See the [current status matrix](status.md).
 
 ## What is still being built
 
-The next milestone is one real, fully traceable Task → agent → Report installation. Current records do not yet supply every required native producer and immutable-version binding. Real source-access adapters, retained context adoption, host configuration, and external publication recovery remain work in progress. This is a research and engineering prototype, not a turnkey autonomous deployment product.
+The next operator milestones are a complete knowledge-filing loop and one useful Task → approved agent work → linked Report journey. Voice intake, general URL/media retrieval, broader agent capabilities and interchangeable harnesses remain incomplete. The public repository is a runnable architecture reference, not a turnkey installation of the private application.
 
 ## Suggested discussion
 

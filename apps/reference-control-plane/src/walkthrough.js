@@ -1,0 +1,25 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { initialTaskState, reduceTask, replayDispatch } from "../../../packages/document-models/src/index.js";
+
+const read = async name => JSON.parse(await readFile(new URL(`../../../fixtures/${name}`, import.meta.url), "utf8"));
+const records = await read("knowledge-workflow.json");
+const lifecycle = await read("dispatch-lifecycle.json");
+const task = records.task.operations.reduce(reduceTask, initialTaskState(records.task.id));
+const dispatch = replayDispatch(lifecycle.document_id, lifecycle.operations);
+assert.equal(records.kind, "illustrative-only");
+assert.equal(records.report.dispatch_ref, dispatch.id);
+assert.ok(dispatch.evidence_refs.includes(records.report.id));
+assert.equal(dispatch.integration_receipt.revision, records.report.content_version);
+assert.equal(records.collection.project_ref, records.project);
+for (const ref of records.collection.member_refs) assert.ok([records.reference.id, records.report.id].includes(ref));
+assert.ok(task.source_refs.includes(records.report.id));
+assert.ok(task.source_refs.includes(records.reference.id));
+assert.equal(task.status, "open");
+console.log("SYNTHETIC WALKTHROUGH — no provider calls, URL retrieval or publication.");
+console.log(`Reference: ${records.reference.id} (${records.reference.retrieval})`);
+console.log(`Collection: ${records.collection.id} → ${records.collection.member_refs.join(", ")}`);
+console.log(`Dispatch: ${dispatch.id} → ${dispatch.status} (fixture replay only)`);
+console.log(`Report: ${records.report.id} version ${records.report.content_version}`);
+console.log(`Task: ${task.id} remains ${task.status} for operator follow-through.`);
+console.log("Reference/Collection/Report fields are illustrative, not native API schemas.");

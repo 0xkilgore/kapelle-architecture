@@ -1,103 +1,59 @@
 # Document models
 
-## The abstraction
+A document model defines typed state, allowed operations, a deterministic reducer and operation history. Runtime admission adds identity, permissions and revision checks. Read projections make that state useful in the interface.
 
-A document model is a typed, operation-sourced object.
+## The objects in Kapelle
 
-It defines:
+| Object | Meaning | Important distinction |
+|---|---|---|
+| Task | A commitment with state and relationships | An agent result does not automatically complete it |
+| Report | Authored output for reading and review, with publisher and content provenance | Reading, approval and external publication are separate |
+| Reference | Retained source material or a link, with source provenance | A URL can be saved without fetching its contents |
+| Collection | Named membership of References and Reports, associated with a project | Membership points to documents; it does not copy bodies or grant access |
+| Agent Definition | Role, capabilities and policy description | Prose policy is not executable enforcement |
+| Agent Instance | A particular agent identity using a definition | Identity is not proof the worker is online |
+| Dispatch | An accepted unit of agent work and its execution/result relationships | A command acknowledgment is not completion |
+| Review Intent | A decision bound to a particular proposal or output | Approval is not proof an external action occurred |
 
-1. State: what the document contains now.
-2. Operations: the legal ways it may change.
-3. Reducer: how each operation produces the next state.
-4. History: the ordered operations that created the state.
-5. Projections: read models optimized for a particular use.
+Tasks and Reports have separate private authorities. Native Reference/Collection support is a development candidate pending activation. This repository implements only simplified Task and Dispatch Journal reducers; the other objects in its walkthrough are explicitly illustrative records. See [status](status.md).
 
 ```mermaid
 flowchart LR
-    Command["Typed operation"] --> Validate
-    Validate --> Log["Append to operation log"]
-    Log --> Reduce["Pure reducer"]
-    Reduce --> State["Current state"]
-    Log --> Projection["Read projections"]
-    State --> Export["Portable document"]
+  I[Inbox source] --> R[Reference]
+  C[Collection] --> R
+  C --> P[Report]
+  T[Task] --> R
+  T --> D[Dispatch]
+  A[Agent Instance] --> D
+  D --> P
+  P --> T
 ```
 
-## Why this fits agent systems
+Arrows express relationships, not automatic execution or access grants. Projects organize documents; they are not a substitute for document identity.
 
-Agent systems have characteristic failure modes:
+## Reference, Collection or Report?
 
-- an agent describes a state that does not exist;
-- two agents update the same work with different assumptions;
-- a retry creates a duplicate side effect;
-- the final file exists but nobody can explain how it changed;
-- a status summary becomes stale while looking authoritative.
+Save an interesting article as a Reference. Group it with related sources in a Collection. Write a synthesis as a Report, with links to its supporting sources. A Collection can contain that Report alongside the References. These documents can participate in shared task/delegation workflows without becoming the same document type.
 
-Typed operations turn those questions into inspectable facts.
+For a Report, the relevant provenance includes who published it, what produced it, when it was produced, and which content version is being reviewed. Large content may be stored separately from lifecycle metadata; the identity/version relationship must remain verifiable. This repository does not prescribe or ship a production blob-store implementation.
 
-## Example: task
+## Operations and history
 
-A task document might accept operations such as:
-
-- `CREATE_TASK`
-- `ASSIGN_OWNER`
-- `LINK_ARTIFACT`
-- `MARK_BLOCKED`
-- `RESOLVE_BLOCKER`
-- `COMPLETE_TASK`
-- `REOPEN_TASK`
-
-Each operation includes a stable identity, timestamp, actor, expected revision, and typed input. The reducer rejects illegal transitions.
-
-## Example: dispatch journal
-
-A dispatch journal records execution lifecycle without pretending that every attempt succeeds:
-
-```text
-requested
-  -> accepted
-  -> leased
-  -> running
-  -> needs_clarification
-  -> resumed
-  -> execution_completed
-  -> evidence_attached
-  -> accepted
-  -> integrated
+```mermaid
+flowchart LR
+  O[Operation] --> V[Validate identity, permission and revision]
+  V --> H[Persist operation history]
+  H --> R[Deterministic reducer]
+  R --> S[Current state]
+  S --> P[Read projection]
 ```
 
-Alternative terminal dispositions include cancelled, declined, duplicate, superseded, retryable failure, and terminal failure.
+The public [Task reducer](../packages/document-models/src/task.js) accepts CREATE_TASK, ASSIGN_TASK, LINK_TASK_SOURCE, BLOCK_TASK, REOPEN_TASK and COMPLETE_TASK. These names describe this example, not the native API. The [Dispatch reducer](../packages/document-models/src/dispatch-journal.js) illustrates attempts, clarification, evidence, acceptance and integration.
 
-## Explicit references
+Stable identifiers connect documents. Content versions identify the exact output reviewed. An editable title or an agent's narrative is not a reliable join key. Markdown is useful for content and export; it does not alone establish operational state.
 
-Documents join through stable identifiers, never title similarity or prose proximity.
+## Powerhouse/Vetra
 
-For example:
+The private system uses native Powerhouse/Vetra models for agent and workflow records. Those packages carry schemas, operations, reducers and history. The public reducers demonstrate selected ideas without distributing the native packages or guaranteeing protocol compatibility. Some queues and recovery receipts remain service records; not every durable row is a native document.
 
-- a task links to its source artifact;
-- an artifact links to the dispatch that produced it;
-- a clarification links to the dispatch and attempt it suspended;
-- an integration receipt links to the accepted artifact and promoted revision.
-
-This makes context assembly deterministic and prevents agents from inventing relationships.
-
-## Markdown and documents
-
-Markdown remains an excellent representation for reading, writing, Git diffs, and model context. Kapelle treats it as an import, export, or projection format.
-
-The source of truth for operational lifecycle should remain the typed document and its operations.
-
-## Current native implementation
-
-As of September 22, the private framework contains native Agent Definition, Agent Instance, Dispatch and Review Intent models. Task Authority and Report Registry are separate services. The Task/Dispatch Journal code in this public repository is a smaller reference implementation; its example operation names are not the native API contract. See [agent governance](agent-governance.md) for current boundaries and remaining service-record/context limitations.
-
-## Powerhouse direction
-
-Kapelle's document architecture is influenced by Powerhouse and Reactive Document Architecture:
-
-- event-sourced documents;
-- command and query separation;
-- local-first operation;
-- document packages containing schemas, reducers, processors, and projections;
-- portable document histories.
-
-Kapelle does not need to reproduce the entire Powerhouse product. The useful boundary is to adopt compatible document principles and packages while preserving a Kapelle-native operator shell.
+Document models organize truth. Adapters and services still have to enforce access, execute effects, publish results and recover correctly. See [governance](agent-governance.md) and [contract limits](contracts.md).

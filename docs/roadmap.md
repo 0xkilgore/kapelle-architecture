@@ -1,35 +1,33 @@
-# Kapelle roadmap
+# Public roadmap
 
-Updated September 22, 2026. Outcomes and qualification stages, not delivery promises.
+Updated October 5, 2026. Milestones describe outcomes, not delivery dates. See [current status](status.md) for what is actually available.
 
-## Now: make one complete work loop trustworthy
+## Now: finish the knowledge filing loop
 
-The prototype already has Today, Inboxes, Tasks, Reports, People and Agents. Recent work joins task context, original agent provenance and output review while preserving distinct approval/execution states. The repaired composition passes synthetic development qualification; real installation is next.
+- Activate native References and Collections with verified storage ownership and recovery.
+- Save an Inbox link into a named Collection, retain its source, and find it through Library and its project.
+- Include Reports as Collection members without duplicating their content or conflating membership with permission.
+- Accept the complete journey on desktop and phone.
 
-- Complete native producer, immutable output-version and source-access adapter contracts.
-- Qualify one real Task → agent → Report relationship and saved context receipt.
-- Adopt persistent host/console bindings explicitly, with rollback and no silent identity migration.
-- Keep a healthy service running while a replacement builds and qualifies.
-- Verify external effect settlement before broadening publication permissions.
+## Next: one useful delegated task
 
-## Next: reduce the operator's coordination burden
+- Start from a Task with its existing instructions and context.
+- Present a recommended action and capable agent; let the owner approve or edit.
+- Execute through a qualified runtime and return a linked Report to Today and the Task.
+- Keep errors, missing context and retries understandable without requiring a development chat.
 
-- Deterministic filing for routine inbox messages, bounded automatic agent routing, suggested actions and uncertain items for human review.
-- Task delegation with clear instructions and linked results.
-- Compact report controls, in-page previews and explicit approval of the reviewed proposal.
-- A small understandable roster of agents with saved capabilities and context.
-- Durable feedback intake linked to roadmap decisions.
+## Then: broaden usefulness
 
-## Then: portable context and broader adoption
+- Better routine inbox filing, explicit project routing and bounded periodic classification.
+- Voice-note transcription and intake with original audio provenance.
+- URL/media retrieval with clear unavailable states and source evidence.
+- More useful agent roles, context organization and portable harness adapters.
+- A reproducible second-user installation.
 
-- Standard organization/retrieval of agent notes, files, skills and receipts.
-- More enforced capability policies instead of descriptive policy prose.
-- Provider/runtime interoperability with preserved work identity.
-- A second-user installation with comprehensible setup and access boundaries.
-- Shared workflows and teams after single-owner recovery and permission boundaries are demonstrated.
+## Public repository track
 
-## What remains open
+Maintain current maturity labels, runnable synthetic examples, document and contract maps, and clear contribution paths. Publishing reference code does not imply the private product is turnkey or that all native packages are public.
 
-How should existing records migrate into stricter native identity/version contracts? Which service journals should become native documents? How should immutable context snapshots be created and admitted without weakening read-only access? What provider-specific evidence is sufficient to settle an uncertain effect?
+## Defer
 
-See [current evidence and limits](status-2026-09-22.md), [governance design](agent-governance.md), and the [conference briefing](conference-brief.md).
+Broad autonomous external actions, arbitrary-agent compatibility claims and a large agent roster before one useful delegated outcome is reliable. Operational recovery work should enable these outcomes, not become the product's central workflow.

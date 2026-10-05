@@ -10,7 +10,8 @@
   "scripts": {
     "test": "node --test tests/*.test.js",
     "demo": "node apps/reference-control-plane/src/demo.js",
-    "serve": "node apps/reference-control-plane/src/server.js"
+    "serve": "node apps/reference-control-plane/src/server.js",
+    "walkthrough": "node apps/reference-control-plane/src/walkthrough.js"
   },
   "license": "MIT"
 }

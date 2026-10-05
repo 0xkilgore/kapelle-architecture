@@ -1,5 +1,7 @@
 # Operator experience
 
+This document describes the product target. Today is the current operator landing surface; “My Desk” describes its intended role. Activity, universal delegation and the full control set below are not all deployed. See [status](status.md) and [workflows](workflows.md).
+
 ## Design goal
 
 The interface should reduce the work required to understand the fleet. Rendering every event is not observability. It is another inbox.

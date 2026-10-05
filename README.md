@@ -4,7 +4,17 @@
 
 A local-first operating console for coordinating AI agents, reviewing their work, and turning output into durable tasks, reports, dispatches, and approvals.
 
-**Conference visitors:** start with the [September 2026 briefing](docs/conference-brief.md), [current implementation status](docs/status-2026-09-22.md), and [agent governance/data structure](docs/agent-governance.md). Website: [Kapelle.ai](https://kapelle.ai).
+**Start here:** [Current status](docs/status.md) · [Workflows](docs/workflows.md) · [Document models](docs/document-models.md) · [Agent guide](AGENTS.md)
+
+Website: [Kapelle.ai](https://kapelle.ai) · [Conference brief](docs/conference-brief.md)
+
+## Choose your route
+
+- **Understand:** read the workflows and current status, then explore the architecture.
+- **Explore:** follow the [contract index](docs/contracts.md) and [orchestration boundary](docs/id-agents-boundary.md).
+- **Run:** use the five-minute commands below, including the connected synthetic walkthrough.
+
+**October 5, 2026:** the private prototype has inbox, task and report workflows and bounded review agents. Native References/Collections are awaiting activation; general Task-to-agent delegation is next. This repository is an MIT-licensed reference implementation, not the complete deployable product.
 
 Kapelle grew out of a practical problem: once several agents are working across real projects, chat stops being an adequate control surface. The operator needs to know what is running, what landed, what requires a decision, and what actually changed.
 
@@ -26,11 +36,11 @@ This repository is the public, executable architecture of that system. It is not
 
 The working private system is larger than this repository. Public claims here are intentionally limited to behavior demonstrated by code, synthetic fixtures, tests, or clearly labeled UI evidence.
 
-## September 2026 development update
+## Documents carry the work
 
-The private framework now uses native Powerhouse/Vetra document models for Agent Definition, Agent Instance, Dispatch and Review Intent, alongside separate Task Authority and Report Registry services. A repaired original-work-context view passed an isolated production build and five synthetic desktop/mobile journeys, including restart recovery. It distinguishes offered context, resolved inputs, task state, agent results, approval and external effect.
+A **Reference** retains a source. A **Collection** groups References and Reports. A **Report** presents authored findings. A **Task** records a commitment, while a **Dispatch** records agent work. Agent identities, reviewed versions and explicit relationships connect them across conversations and runtimes.
 
-This public repository still contains **smaller reference implementations**, not the complete native packages or private application. Real-source bindings, access adapters and host adoption remain installation work; successful development tests are not a live release. [Read the evidence and limits](docs/status-2026-09-22.md).
+The public code implements simplified Task/Dispatch examples. The [model map](docs/document-models.md) explains the wider private architecture without claiming all models are public or deployed.
 
 ## Local AI: Qwen on Apple silicon
 
@@ -49,15 +59,21 @@ This is the privacy property that matters: private-domain prompts cannot silentl
 
 ## Five-minute verification
 
+```bash
+git clone https://github.com/0xkilgore/kapelle-architecture.git
+cd kapelle-architecture
+```
+
 Requires Node.js 20 or newer. There are no third-party runtime dependencies.
 
 ```bash
 npm test
 npm run demo
+npm run walkthrough
 npm run serve
 ```
 
-Then submit a durable command:
+The demo and walkthrough use synthetic data and do not execute an agent. `serve` starts a loopback command store. In a second terminal, submit a durable command:
 
 ```bash
 curl -X POST http://127.0.0.1:4400/commands \
@@ -66,7 +82,7 @@ curl -X POST http://127.0.0.1:4400/commands \
   -d '{"kind":"dispatch_agent","subject":"Prepare architecture briefing","agent_id":"agent:research"}'
 ```
 
-The server commits the command before returning its stable ID. Repeating the request with the same idempotency key returns the original command instead of creating duplicate work.
+This records a request; no worker or provider is invoked. The server commits the command before returning its stable ID. Repeating the request with the same idempotency key returns the original command instead of creating duplicate work.
 
 For a code-first tour:
 
@@ -148,6 +164,8 @@ Start with:
 
 ## Status and limitations
 
+Read the [October 5 status matrix](docs/status.md) for the current distinction between live prototype, development candidate and planned work. Older screenshots remain synthetic historical examples.
+
 Kapelle is an active private prototype with a working operator UI, local agent fleet, document packages, orchestration backend, and local-model integration. This public repository is a curated technical profile, not the complete application source.
 
 The distinction between claim types is deliberate:
@@ -155,10 +173,12 @@ The distinction between claim types is deliberate:
 - **Demonstrated here:** protocol, reducers, lifecycle replay, restart-safe idempotency, and local-inference policy enforcement.
 - **Demonstrated privately, represented safely here:** the operator UI and local Qwen deployment.
 - **Development-qualified privately:** pinned original-work context and separate approval state with synthetic desktop/mobile and restart checks.
-- **In progress:** real source/producer bindings, context-store adoption, runtime installation and external-effect settlement.
+- **In progress:** Collections activation, broader context portability and general Task-origin delegation; see the dated status matrix for scope.
 - **Not claimed:** a turnkey public deployment, production hardening, autonomous mutation of private records, or a general security guarantee for arbitrary local-model servers.
 
 Agent software needs more receipts and fewer demos that imply finished infrastructure.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution scope and checks.
 
 ## Principles
 

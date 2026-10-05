@@ -1,6 +1,6 @@
 # Agent governance and durable context
 
-Updated September 22, 2026. This document describes the current private implementation direction and its limits. The public Task/Dispatch Journal examples are smaller dependency-free reference models, not exports of the native Powerhouse/Vetra packages.
+Historical technical snapshot: September 22, 2026. The installation constraints below describe that candidate; consult [current status](status.md) and the [model map](document-models.md) for subsequent work. This document explains its private implementation direction and limits. The public Task/Dispatch Journal examples are smaller dependency-free reference models, not exports of the native Powerhouse/Vetra packages.
 
 ## Authority and responsibility
 

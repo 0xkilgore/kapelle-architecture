@@ -1,53 +1,19 @@
-# Example document contracts
+# Synthetic document walkthrough
 
-These examples illustrate the intended boundary. They are not production schemas.
+From the repository root with Node.js 20+:
 
-## Task
-
-```json
-{
-  "id": "task:example",
-  "revision": 3,
-  "state": {
-    "title": "Review the architecture brief",
-    "status": "open",
-    "owner": "user:operator",
-    "source_ref": "artifact:architecture-brief"
-  }
-}
+```sh
+npm test
+npm run demo
+npm run walkthrough
 ```
 
-Example operation:
+No dependencies, accounts, model weights or credentials are needed.
 
-```json
-{
-  "operation_id": "op:example-1",
-  "document_id": "task:example",
-  "type": "COMPLETE_TASK",
-  "expected_revision": 3,
-  "actor": "user:operator",
-  "timestamp": "2026-01-01T12:00:00Z",
-  "input": {
-    "completion_note": "Reviewed and shared"
-  }
-}
-```
+`demo` replays [Dispatch operations](../../fixtures/dispatch-lifecycle.json), including clarification, two attempts, output acceptance and a synthetic integration receipt.
 
-## Dispatch receipt
+`walkthrough` combines the real public Task and Dispatch reducers with [illustrative linked records](../../fixtures/knowledge-workflow.json). It checks references and prints where the output belongs. The Reference, Collection and Report objects are teaching examples, not native model exports. No URL is fetched, agent run, report published or private data read.
 
-```json
-{
-  "dispatch_id": "dispatch:example",
-  "status": "execution_completed",
-  "requested_runtime": "provider-neutral",
-  "actual_runtime": "example-runtime",
-  "attempt": 1,
-  "artifact_refs": ["artifact:architecture-brief"],
-  "usage": {
-    "status": "unavailable",
-    "source": "runtime-did-not-report"
-  }
-}
-```
+The fixture illustrates a Reference and Report in one Collection, a Task linking both, and a Dispatch producing the Report. A Task can remain open after an agent produces a result: the operator's follow-through is separate from execution completion.
 
-The contract refuses to invent usage when the runtime does not supply it.
+To inspect durable command acceptance separately, run `npm run serve` and follow the root README's curl example. Restarting the server preserves its reference command log; it does not resume an agent.

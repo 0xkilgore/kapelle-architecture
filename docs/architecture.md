@@ -1,5 +1,7 @@
 # System architecture
 
+This is the target system decomposition, not a list of deployed features. Voice intake, portable adapters and general delegation remain incomplete; see [current status](status.md). The public reference implements only the boundaries in the [contract index](contracts.md).
+
 ## Architectural goal
 
 Kapelle should remain useful even when a model provider, agent process, browser, network connection, or manager process fails.
@@ -33,7 +35,9 @@ flowchart LR
 
     subgraph Documents["Document substrate"]
       Tasks
-      Artifacts
+      Reports
+      References
+      Collections
       Projects
       Health
       Usage
