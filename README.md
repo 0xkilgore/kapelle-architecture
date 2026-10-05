@@ -172,4 +172,4 @@ Agent software needs more receipts and fewer demos that imply finished infrastru
 
 ## License
 
-No license has been selected. The repository is public for evaluation and architectural discussion; all rights are reserved until a license is added.
+This repository is licensed under the [MIT License](LICENSE). You may use, modify, and redistribute its code and documentation, including commercially, subject to the license terms. Third-party code retains its applicable licenses and notices.

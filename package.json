@@ -11,5 +11,6 @@
     "test": "node --test tests/*.test.js",
     "demo": "node apps/reference-control-plane/src/demo.js",
     "serve": "node apps/reference-control-plane/src/server.js"
-  }
+  },
+  "license": "MIT"
 }
